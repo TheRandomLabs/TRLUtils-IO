@@ -23,8 +23,7 @@ public class ZipFile implements AutoCloseable {
 	private static final Map<String, String> CREATE = ImmutableMap.of("create", "true");
 	private static final Map<String, String> DO_NOT_CREATE = ImmutableMap.of("create", "false");
 
-	final FileSystem fileSystem;
-
+	private final FileSystem fileSystem;
 	private final Path path;
 
 	public ZipFile(Path path) throws IOException {

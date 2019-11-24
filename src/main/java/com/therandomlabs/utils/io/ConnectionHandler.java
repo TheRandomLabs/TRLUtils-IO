@@ -141,7 +141,7 @@ public class ConnectionHandler {
 	public URL redirectURL(URL url, int redirections, boolean leavePlusesDecoded)
 			throws IOException {
 		Preconditions.checkNotNull(url, "url should not be null");
-		Preconditions.checkArgument(redirections > 0, "redirections should be above 0");
+		Preconditions.checkArgument(redirections > 0, "redirections should be positive");
 
 		HttpURLConnection connection;
 		String previousLocation = null;
