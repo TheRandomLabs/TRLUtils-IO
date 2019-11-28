@@ -127,7 +127,7 @@ public final class NetUtils {
 			return connection.getInputStream();
 		} catch (IOException ex) {
 			//We try to read the error stream and throw its content as a separate IOException.
-			try (InputStream errorStream = connection.getErrorStream()){
+			try (InputStream errorStream = connection.getErrorStream()) {
 				if (errorStream == null) {
 					throw ex;
 				}
