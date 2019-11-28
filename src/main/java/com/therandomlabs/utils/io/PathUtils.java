@@ -5,11 +5,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import org.apache.commons.io.IOUtils;
 
-public class PathUtils {
+public final class PathUtils {
 	private PathUtils() {}
 
 	public static boolean isValid(String path) {
@@ -95,6 +95,6 @@ public class PathUtils {
 
 	public static String ensureUnixPathSeparators(String path) {
 		Preconditions.checkNotNull(path, "path should not be null");
-		return path.replace(IOUtils.DIR_SEPARATOR_WINDOWS, IOUtils.DIR_SEPARATOR_UNIX);
+		return path.replace(IOConstants.DIR_SEPARATOR_WINDOWS, IOConstants.DIR_SEPARATOR_UNIX);
 	}
 }

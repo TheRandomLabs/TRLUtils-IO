@@ -2,13 +2,12 @@ package com.therandomlabs.utils.io;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -18,8 +17,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import com.google.common.base.Preconditions;
-import org.apache.commons.io.IOUtils;
+import com.google.common.io.CharStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +55,7 @@ public final class NetUtils {
 		Preconditions.checkNotNull(encoding, "encoding should not be null");
 
 		//Some websites, such as CurseForge, sometimes put tabs in their file names for some reason.
-		final String path = url.getPath().replace("\t", " ");
+		final String path = url.getPath().replace('\t', ' ');
 
 		if (path.isEmpty()) {
 			return null;
@@ -127,48 +127,21 @@ public final class NetUtils {
 			return connection.getInputStream();
 		} catch (IOException ex) {
 			//We try to read the error stream and throw its content as a separate IOException.
-			try {
-				final InputStream errorStream = connection.getErrorStream();
-
+			try (InputStream errorStream = connection.getErrorStream()){
 				if (errorStream == null) {
 					throw ex;
 				}
 
 				throw new IOException(
 						"Failed to read from " + connection.getURL() + ": " +
-								IOUtils.toString(errorStream, encoding), ex
+								CharStreams.toString(new InputStreamReader(errorStream, encoding)),
+						ex
 				);
 			} catch (IOException ex2) {
 				//Since the error stream couldn't be read either, we throw the original exception.
 				throw ex;
 			}
 		}
-	}
-
-	public static boolean isValidURL(String url) {
-		if (url == null) {
-			return false;
-		}
-
-		try {
-			return isValidURL(new URL(url));
-		} catch (MalformedURLException ex) {
-			return false;
-		}
-	}
-
-	public static boolean isValidURL(URL url) {
-		if (url == null) {
-			return false;
-		}
-
-		try {
-			url.toURI();
-		} catch (URISyntaxException ex) {
-			return false;
-		}
-
-		return true;
 	}
 
 	public static String getMacAddress() throws SocketException, UnknownHostException {

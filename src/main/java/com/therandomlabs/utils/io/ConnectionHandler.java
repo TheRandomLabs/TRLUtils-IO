@@ -2,6 +2,7 @@ package com.therandomlabs.utils.io;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -13,12 +14,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+
 import com.google.common.base.Preconditions;
-import org.apache.commons.io.IOUtils;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.CharStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConnectionHandler {
+public final class ConnectionHandler {
 	private static final Logger logger = LoggerFactory.getLogger(ConnectionHandler.class);
 
 	private final Map<String, String> requestProperties = new HashMap<>();
@@ -125,9 +128,14 @@ public class ConnectionHandler {
 		return NetUtils.getInputStream(connect(url), encoding);
 	}
 
-	public String readString(URL url) throws IOException {
+	public String read(URL url) throws IOException {
 		Preconditions.checkNotNull(url, "url should not be null");
-		return IOUtils.toString(getInputStream(url), encoding);
+
+		try (
+				InputStreamReader reader = new InputStreamReader(getInputStream(url), encoding)
+		) {
+			return CharStreams.toString(reader);
+		}
 	}
 
 	public URL redirectURL(URL url) throws IOException {
@@ -170,7 +178,7 @@ public class ConnectionHandler {
 
 			previousLocation = location;
 			final URL previousURL = url;
-			url = getURLFromLocationHeader(connection, location, leavePlusesDecoded);
+			url = getURLFromLocation(connection, location, leavePlusesDecoded);
 			connection.disconnect();
 
 			if (url == null) {
@@ -184,7 +192,7 @@ public class ConnectionHandler {
 	public void download(URL url, OutputStream outputStream) throws IOException {
 		Preconditions.checkNotNull(url, "url should not be null");
 		Preconditions.checkNotNull(outputStream, "outputStream should not be null");
-		IOUtils.copy(getInputStream(url), outputStream);
+		ByteStreams.copy(getInputStream(url), outputStream);
 	}
 
 	public void download(URL url, Path path) throws IOException {
@@ -198,7 +206,7 @@ public class ConnectionHandler {
 		return new DownloadInfo(connect(url));
 	}
 
-	private URL getURLFromLocationHeader(
+	private URL getURLFromLocation(
 			HttpURLConnection connection, String location, boolean leavePlusesDecoded
 	) throws IOException {
 		final URL url = connection.getURL();
@@ -219,7 +227,7 @@ public class ConnectionHandler {
 			//Some websites, such as CurseForge, do not encode their URL paths correctly,
 			//so we try encoding it and returning it as the redirected URL if it is valid.
 			final URL encodedURL = NetUtils.encodeURLPath(url, encoding, leavePlusesDecoded);
-			return NetUtils.isValidURL(encodedURL) ? encodedURL : null;
+			return URLUtils.isValid(encodedURL) ? encodedURL : null;
 		}
 	}
 }

@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import org.apache.commons.io.IOUtils;
 
 public final class NIOUtils {
 	private NIOUtils() {}
@@ -27,7 +27,7 @@ public final class NIOUtils {
 				Files.isDirectory(directory), "directory should be a directory"
 		);
 
-		try (final Stream<Path> list = Files.list(directory)) {
+		try (Stream<Path> list = Files.list(directory)) {
 			return list.collect(Collectors.toList());
 		}
 	}
@@ -38,16 +38,20 @@ public final class NIOUtils {
 				Files.isDirectory(directory), "directory should be a directory"
 		);
 
-		final List<Path> children = list(directory);
+		List<Path> children = list(directory);
 
-		for (int i = 0; i < children.size(); i++) {
-			final Path child = children.get(i);
+		while (!children.isEmpty()) {
+			final List<Path> nextChildren = new ArrayList<>();
 
-			if (!Files.isDirectory(child)) {
-				return false;
+			for (Path child : children) {
+				if (!Files.isDirectory(child)) {
+					return false;
+				}
+
+				nextChildren.addAll(list(child));
 			}
 
-			children.addAll(list(child));
+			children = nextChildren;
 		}
 
 		return true;
@@ -110,7 +114,7 @@ public final class NIOUtils {
 		Preconditions.checkNotNull(encoding, "encoding should not be null");
 
 		if (forceEndNewline && !content.endsWith("\n")) {
-			content += IOUtils.LINE_SEPARATOR;
+			content += IOConstants.LINE_SEPARATOR;
 		}
 
 		return Files.write(path, content.getBytes(encoding));
@@ -157,7 +161,7 @@ public final class NIOUtils {
 
 		glob = PathUtils.ensureUnixPathSeparators(glob);
 
-		final String[] elements = glob.split(String.valueOf(IOUtils.DIR_SEPARATOR_UNIX));
+		final String[] elements = glob.split(String.valueOf(IOConstants.DIR_SEPARATOR_UNIX));
 		final List<Path> parentDirectories;
 
 		if (elements.length > 1) {
@@ -171,7 +175,7 @@ public final class NIOUtils {
 
 		for (Path parentDirectory : parentDirectories) {
 			try (
-					final DirectoryStream<Path> stream =
+					DirectoryStream<Path> stream =
 							Files.newDirectoryStream(parentDirectory, childGlob)
 			) {
 				stream.forEach(path -> paths.add(path.toAbsolutePath().normalize()));
@@ -192,7 +196,7 @@ public final class NIOUtils {
 
 			for (Path parentDirectory : parentDirectories) {
 				try (
-						final DirectoryStream<Path> stream =
+						DirectoryStream<Path> stream =
 								Files.newDirectoryStream(parentDirectory, element)
 				) {
 					Iterables.filter(stream, Files::isDirectory).forEach(childDirectories::add);

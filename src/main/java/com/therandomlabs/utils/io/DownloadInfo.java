@@ -7,10 +7,13 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.google.common.base.Preconditions;
+
 public final class DownloadInfo {
 	private final HttpURLConnection connection;
 
-	public DownloadInfo(HttpURLConnection connection) throws IOException {
+	public DownloadInfo(HttpURLConnection connection) {
+		Preconditions.checkNotNull(connection, "connection should not be null");
 		this.connection = connection;
 	}
 
@@ -31,6 +34,7 @@ public final class DownloadInfo {
 	}
 
 	public String getContentDispositionDirective(String directive) {
+		Preconditions.checkNotNull(directive, "directive should not be null");
 		return NetUtils.getContentDispositionDirective(getContentDisposition(), directive);
 	}
 
@@ -47,15 +51,23 @@ public final class DownloadInfo {
 	}
 
 	public String getFileName(Charset encoding) {
+		Preconditions.checkNotNull(encoding, "encoding should not be null");
 		return NetUtils.getFileName(connection, encoding);
 	}
 
-	//Document that encoding is only used for the error stream
-	public void download(Path location, Charset encoding) throws IOException {
-		Files.copy(NetUtils.getInputStream(connection, encoding), location);
+	//Encoding is only used for the error stream
+	public void download(Path path, Charset encoding) throws IOException {
+		Preconditions.checkNotNull(path, "path should not be null");
+		Preconditions.checkNotNull(encoding, "encoding should not be null");
+		Files.copy(NetUtils.getInputStream(connection, encoding), path);
 	}
 
 	public void downloadToDirectory(Path directory, Charset encoding) throws IOException {
+		Preconditions.checkNotNull(directory, "directory should not be null");
+		Preconditions.checkArgument(
+				Files.isDirectory(directory), "directory should be a directory"
+		);
+		Preconditions.checkNotNull(encoding, "encoding should not be null");
 		download(directory.resolve(getFileName(encoding)), encoding);
 	}
 }

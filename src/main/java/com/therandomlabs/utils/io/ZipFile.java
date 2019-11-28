@@ -56,7 +56,7 @@ public class ZipFile implements AutoCloseable {
 	}
 
 	public String getComment() throws IOException {
-		try (final java.util.zip.ZipFile zipFile = new java.util.zip.ZipFile(path.toFile())) {
+		try (java.util.zip.ZipFile zipFile = new java.util.zip.ZipFile(path.toFile())) {
 			return zipFile.getComment();
 		}
 	}
