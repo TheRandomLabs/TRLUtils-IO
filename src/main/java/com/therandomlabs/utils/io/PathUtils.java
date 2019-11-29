@@ -95,7 +95,7 @@ public final class PathUtils {
 
 			if (subpath1.equals(path2.subpath(0, i))) {
 				//Since Path#subpath strips away the initial "/", we prepend Path#getRoot.
-				return Paths.get(Objects.toString(path1.getRoot(), ""), subpath1.toString());
+				return Paths.get(Objects.toString(path1.getRoot(), "") + subpath1.toString());
 			}
 		}
 

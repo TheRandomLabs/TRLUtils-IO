@@ -11,7 +11,8 @@ public final class HumanReadableSize {
 	 *
 	 * @param bytes a size in bytes.
 	 * @return the specified size in a human-readable format in decimal units.
-	 * For example, for a size of {@code 1000000}, the string {@code "1 MB"} is returned.
+	 * For example, for a size of {@code 1000000}, the string {@code "1.0 MB"} is returned,
+	 * or {@code "1,0 MB"} depending on the locale.
 	 */
 	public static String decimal(long bytes) {
 		return get(bytes, true);
@@ -23,7 +24,7 @@ public final class HumanReadableSize {
 	 * @param bytes a size in bytes.
 	 * @return the specified size in a human-readable format in binary units.
 	 * For example, for a size of {@code 1048576} ({@code 1024^2}),
-	 * the string {@code "1 MiB"} is returned.
+	 * the string {@code "1.0 MiB"} is returned, or {@code "1,0 MiB"} depending on the locale.
 	 */
 	public static String binary(long bytes) {
 		return get(bytes, false);
