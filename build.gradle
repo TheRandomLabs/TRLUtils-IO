@@ -48,11 +48,15 @@ jacocoTestCoverageVerification {
 				value = "COVEREDRATIO"
 				minimum = 0.8
 			}
+
+			excludes = [
+					"com.therandomlabs.utils.io.IOConstants"
+			]
 		}
 	}
 }
 
-//check.dependsOn jacocoTestCoverageVerification
+check.dependsOn jacocoTestCoverageVerification
 
 pmd {
 	ruleSets = []

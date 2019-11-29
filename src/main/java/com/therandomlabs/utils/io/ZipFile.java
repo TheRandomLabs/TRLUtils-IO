@@ -96,18 +96,18 @@ public class ZipFile implements AutoCloseable {
 	 */
 	public Path getEntry(String entryPath) {
 		Preconditions.checkNotNull(entryPath, "entryPath should not be null");
-		return fileSystem.getPath(entryPath);
+		return fileSystem.getPath(entryPath).toAbsolutePath().normalize();
 	}
 
 	/**
 	 * Returns a {@link Path} that represents this {@link ZipFile}'s root.
-	 * This is equivalent to calling {@link ZipFile#getEntry(String)} with {@code ""} as
+	 * This is equivalent to calling {@link ZipFile#getEntry(String)} with {@code "/"} as
 	 * the entry path.
 	 *
 	 * @return a {@link Path} that represents this {@link ZipFile}'s root.
 	 */
 	public Path getRoot() {
-		return getEntry("");
+		return getEntry("/");
 	}
 
 	/**

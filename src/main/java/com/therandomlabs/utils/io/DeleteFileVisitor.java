@@ -9,9 +9,11 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.function.Predicate;
 
 final class DeleteFileVisitor extends SimpleFileVisitor<Path> {
+	private final Path baseDirectory;
 	private final Predicate<Path> filter;
 
-	DeleteFileVisitor(Predicate<Path> filter) {
+	DeleteFileVisitor(Path baseDirectory, Predicate<Path> filter) {
+		this.baseDirectory = baseDirectory;
 		this.filter = filter;
 	}
 
@@ -32,7 +34,8 @@ final class DeleteFileVisitor extends SimpleFileVisitor<Path> {
 			return FileVisitResult.TERMINATE;
 		}
 
-		if (filter.test(directory)) {
+		if (!directory.equals(baseDirectory) && filter.test(directory)) {
+			Files.walkFileTree(directory, new DeleteFileVisitor(directory, path -> true));
 			Files.delete(directory);
 		}
 

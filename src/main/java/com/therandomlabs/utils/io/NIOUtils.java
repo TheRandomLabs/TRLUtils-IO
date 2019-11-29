@@ -126,7 +126,9 @@ public final class NIOUtils {
 		final Path commonAncestor = PathUtils.getCommonAncestor(normalized);
 
 		for (Path file : normalized) {
-			Files.copy(file, targetDirectory.resolve(commonAncestor.relativize(file)), options);
+			final Path target = targetDirectory.resolve(commonAncestor.relativize(file));
+			ensureParentExists(target);
+			Files.copy(file, target, options);
 		}
 	}
 
@@ -153,7 +155,11 @@ public final class NIOUtils {
 	 * @throws IOException if an I/O error occurs.
 	 */
 	public static void deleteDirectory(Path directory) throws IOException {
-		deleteDirectory(directory, pathToTest -> true);
+		if (!list(directory).isEmpty()) {
+			deleteInDirectory(directory, path -> true);
+		}
+
+		Files.delete(directory);
 	}
 
 	/**
@@ -165,13 +171,14 @@ public final class NIOUtils {
 	 * deleted.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	public static void deleteDirectory(Path directory, Predicate<Path> filter) throws IOException {
+	public static void deleteInDirectory(Path directory, Predicate<Path> filter)
+			throws IOException {
 		Preconditions.checkNotNull(directory, "directory should not be null");
 		Preconditions.checkArgument(
 				Files.isDirectory(directory), "directory should be a directory"
 		);
 		Preconditions.checkNotNull(filter, "filter should not be null");
-		Files.walkFileTree(directory, new DeleteFileVisitor(filter));
+		Files.walkFileTree(directory, new DeleteFileVisitor(directory, filter));
 	}
 
 	/**
@@ -212,8 +219,12 @@ public final class NIOUtils {
 		);
 		Preconditions.checkNotNull(glob, "glob should not be null");
 
+		directory = directory.toAbsolutePath().normalize();
+
 		final FileSystem fileSystem = directory.getFileSystem();
-		final PathMatcher matcher = fileSystem.getPathMatcher("glob:" + directory + "/" + glob);
+		final PathMatcher matcher = fileSystem.getPathMatcher(
+				"glob:" + PathUtils.withUnixDirectorySeparators(directory) + "/" + glob
+		);
 
 		try (Stream<Path> stream = Files.walk(directory)) {
 			return stream.filter(matcher::matches).collect(Collectors.toList());

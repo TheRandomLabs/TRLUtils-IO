@@ -46,7 +46,7 @@ public class PathUtilsTest {
 	}
 
 	@Test
-	public void pathIsReturnedWithUnixDirectorySeparators() {
+	public void pathShouldBeReturnedWithUnixDirectorySeparators() {
 		assertThat(PathUtils.withUnixDirectorySeparators(Paths.get("a\\b"))).isEqualTo("a/b");
 		assertThat(PathUtils.withUnixDirectorySeparators("C:\\test")).isEqualTo("C:/test");
 	}
