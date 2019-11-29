@@ -16,7 +16,7 @@ public class PathUtilsTest {
 
 	@Test
 	public void invalidPathsShouldBeInvalid() {
-		assertThat(PathUtils.isValid("/test/:")).isFalse();
+		assertThat(PathUtils.isValid("/test/\"")).isFalse();
 		assertThat(PathUtils.isValid("?\\test/path")).isFalse();
 	}
 
