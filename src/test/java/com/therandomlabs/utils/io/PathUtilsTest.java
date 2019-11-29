@@ -15,12 +15,6 @@ public class PathUtilsTest {
 	}
 
 	@Test
-	public void invalidPathsShouldBeInvalid() {
-		assertThat(PathUtils.isValid("/test/\"")).isFalse();
-		assertThat(PathUtils.isValid("?\\test/path")).isFalse();
-	}
-
-	@Test
 	public void correctFileNamesShouldBeReturned() {
 		assertThat(PathUtils.getFileName(Paths.get("/test/file.txt"))).isEqualTo("file.txt");
 		assertThat(PathUtils.getFileName(Paths.get(""))).isEmpty();
