@@ -5,10 +5,4 @@
 	<Match>
 		<Bug pattern="EXS_EXCEPTION_SOFTENING_RETURN_FALSE"/>
 	</Match>
-	<Match>
-		<Bug pattern="MDM_INETADDRESS_GETLOCALHOST"/>
-	</Match>
-	<Match>
-		<Bug pattern="URLCONNECTION_SSRF_FD"/>
-	</Match>
 </FindBugsFilter>

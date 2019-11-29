@@ -1,26 +1,33 @@
 package com.therandomlabs.utils.io;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.CopyOption;
-import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileTime;
+import java.nio.file.PathMatcher;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
+/**
+ * Contains utility methods for filesystem manipulation with Java NIO.
+ */
 public final class NIOUtils {
 	private NIOUtils() {}
 
+	/**
+	 * Returns a list of elements within the specified directory.
+	 *
+	 * @param directory a {@link Path} to a directory.
+	 * @return a mutable {@link List} of {@link Path}s to elements within the specified directory.
+	 * @throws IOException if an I/O error occurs when opening the directory.
+	 */
 	public static List<Path> list(Path directory) throws IOException {
 		Preconditions.checkNotNull(directory, "directory should not be null");
 		Preconditions.checkArgument(
@@ -32,6 +39,15 @@ public final class NIOUtils {
 		}
 	}
 
+	/**
+	 * Returns whether the tree of the specified directory is empty, i.e. does not contain
+	 * any files and only contains directories.
+	 *
+	 * @param directory a {@link Path} to a directory.
+	 * @return {@code true} if the tree of the specified directory is empty,
+	 * or otherwise {@code false}.
+	 * @throws IOException if an I/O error occurs when opening a directory.
+	 */
 	public static boolean isTreeEmpty(Path directory) throws IOException {
 		Preconditions.checkNotNull(directory, "directory should not be null");
 		Preconditions.checkArgument(
@@ -57,35 +73,12 @@ public final class NIOUtils {
 		return true;
 	}
 
-	public static void touch(Path path) throws IOException {
-		Preconditions.checkNotNull(path, "path should not be null");
-
-		if (!Files.exists(path)) {
-			Files.createFile(path);
-		}
-
-		final long millis = System.currentTimeMillis();
-
-		Files.setLastModifiedTime(path, FileTime.fromMillis(millis));
-
-		if (Files.getLastModifiedTime(path).toMillis() != millis) {
-			throw new IOException("Could not set last modification time: " + path);
-		}
-	}
-
-	public static boolean canTouch(Path path) {
-		Preconditions.checkNotNull(path, "path should not be null");
-
-		try {
-			final FileTime originalTime = Files.getLastModifiedTime(path);
-			touch(path);
-			Files.setLastModifiedTime(path, originalTime);
-			return true;
-		} catch (IOException ignored) {}
-
-		return false;
-	}
-
+	/**
+	 * Creates any nonexistent parent directories of the specified {@link Path} if necessary.
+	 *
+	 * @param path a {@link Path}.
+	 * @throws IOException if an I/O error occurs.
+	 */
 	public static void ensureParentExists(Path path) throws IOException {
 		Preconditions.checkNotNull(path, "path should not be null");
 
@@ -96,30 +89,55 @@ public final class NIOUtils {
 		}
 	}
 
-	public static String readFile(Path path, Charset charset) throws IOException {
-		Preconditions.checkNotNull(path, "path should not be null");
-		Preconditions.checkArgument(Files.isRegularFile(path), "path should be a file");
-		Preconditions.checkNotNull(charset, "charset should not be null");
-		return new String(Files.readAllBytes(path), charset);
-	}
+	/**
+	 * Copies the specified files to the specified target directory while preserving directory
+	 * structure.
+	 * This is done by finding the common ancestor of the {@link Path}s using
+	 * {@link PathUtils#getCommonAncestor(Collection)}.
+	 *
+	 * @param files a collection of {@link Path}s.
+	 * @param targetDirectory a {@link Path} to a target directory.
+	 * @param options {@link CopyOption}s that specify how the files should be copied.
+	 * @throws IOException if an I/O error occurs.
+	 */
+	public static void copyPreservingDirectoryStructure(
+			Collection<Path> files, Path targetDirectory, CopyOption... options
+	) throws IOException {
+		Preconditions.checkNotNull(files, "files should not be null");
+		Preconditions.checkNotNull(targetDirectory, "targetDirectory should not be null");
+		Preconditions.checkArgument(
+				Files.isDirectory(targetDirectory), "targetDirectory should be a directory"
+		);
+		Preconditions.checkNotNull(options, "options should not be null");
 
-	public static Path write(Path path, String content, Charset encoding) throws IOException {
-		return write(path, content, encoding, true);
-	}
-
-	public static Path write(Path path, String content, Charset encoding, boolean forceEndNewline)
-			throws IOException {
-		Preconditions.checkNotNull(path, "path should not be null");
-		Preconditions.checkNotNull(content, "content should not be null");
-		Preconditions.checkNotNull(encoding, "encoding should not be null");
-
-		if (forceEndNewline && !content.endsWith("\n")) {
-			content += IOConstants.LINE_SEPARATOR;
+		if (files.isEmpty()) {
+			return;
 		}
 
-		return Files.write(path, content.getBytes(encoding));
+		if (files.size() == 1) {
+			final Path file = files.iterator().next();
+			Files.copy(file, targetDirectory.resolve(file.getFileName()), options);
+			return;
+		}
+
+		final List<Path> normalized = files.stream().
+				map(file -> file.toAbsolutePath().normalize()).
+				collect(Collectors.toList());
+		final Path commonAncestor = PathUtils.getCommonAncestor(normalized);
+
+		for (Path file : normalized) {
+			Files.copy(file, targetDirectory.resolve(commonAncestor.relativize(file)), options);
+		}
 	}
 
+	/**
+	 * Recursively copies the specified source directory to the specified target location.
+	 *
+	 * @param sourceDirectory a {@link Path} to the directory to copy.
+	 * @param targetDirectory a {@link Path} to the target location.
+	 * @param options {@link CopyOption}s that specify how files should be copied.
+	 * @throws IOException if an I/O error occurs.
+	 */
 	public static void copyDirectory(
 			Path sourceDirectory, Path targetDirectory, CopyOption... options
 	) throws IOException {
@@ -128,10 +146,25 @@ public final class NIOUtils {
 		Files.walkFileTree(sourceDirectory, new CopyFileVisitor(targetDirectory, options));
 	}
 
+	/**
+	 * Recursively deletes the specified directory.
+	 *
+	 * @param directory a {@link Path} to a directory.
+	 * @throws IOException if an I/O error occurs.
+	 */
 	public static void deleteDirectory(Path directory) throws IOException {
 		deleteDirectory(directory, pathToTest -> true);
 	}
 
+	/**
+	 * Recursively deletes all files and directories in the specified directory that match the
+	 * specified filter.
+	 *
+	 * @param directory a {@link Path} to a directory.
+	 * @param filter a {@link Predicate} that determines which files and directories should be
+	 * deleted.
+	 * @throws IOException if an I/O error occurs.
+	 */
 	public static void deleteDirectory(Path directory, Predicate<Path> filter) throws IOException {
 		Preconditions.checkNotNull(directory, "directory should not be null");
 		Preconditions.checkArgument(
@@ -141,6 +174,13 @@ public final class NIOUtils {
 		Files.walkFileTree(directory, new DeleteFileVisitor(filter));
 	}
 
+	/**
+	 * Recursively deletes the specified directory if it exists.
+	 *
+	 * @param directory a {@link Path} to a directory.
+	 * @return {@code true} if the directory existed, or otherwise {@code false}.
+	 * @throws IOException if an I/O error occurs.
+	 */
 	public static boolean deleteDirectoryIfExists(Path directory) throws IOException {
 		Preconditions.checkNotNull(directory, "directory should not be null");
 
@@ -152,6 +192,19 @@ public final class NIOUtils {
 		return true;
 	}
 
+	/**
+	 * Returns a list of {@link Path}s that match the specified glob relative to the
+	 * specified directory.
+	 *
+	 * @param directory a {@link Path} to a directory.
+	 * @param glob a glob. The Unix path separator ({@code /}) should be used instead of the
+	 * Windows path separator ({@code \}) as the backslash is used as an escape character.
+	 * @return a list of {@link Path}s that match the specified glob relative to the
+	 * specified directory.
+	 * @throws IOException if an I/O error occurs.
+	 * @see FileSystem#getPathMatcher(String)
+	 */
+	@SuppressWarnings("PMD.CloseResource")
 	public static List<Path> matchGlob(Path directory, String glob) throws IOException {
 		Preconditions.checkNotNull(directory, "directory should not be null");
 		Preconditions.checkArgument(
@@ -159,58 +212,11 @@ public final class NIOUtils {
 		);
 		Preconditions.checkNotNull(glob, "glob should not be null");
 
-		glob = PathUtils.ensureUnixPathSeparators(glob);
+		final FileSystem fileSystem = directory.getFileSystem();
+		final PathMatcher matcher = fileSystem.getPathMatcher("glob:" + directory + "/" + glob);
 
-		final String[] elements = glob.split(String.valueOf(IOConstants.DIR_SEPARATOR_UNIX));
-		final List<Path> parentDirectories;
-
-		if (elements.length > 1) {
-			parentDirectories = getParentDirectoriesFromGlobElements(directory, elements);
-		} else {
-			parentDirectories = Collections.singletonList(directory);
+		try (Stream<Path> stream = Files.walk(directory)) {
+			return stream.filter(matcher::matches).collect(Collectors.toList());
 		}
-
-		final List<Path> paths = new ArrayList<>();
-		final String childGlob = elements[elements.length - 1];
-
-		for (Path parentDirectory : parentDirectories) {
-			try (
-					DirectoryStream<Path> stream =
-							Files.newDirectoryStream(parentDirectory, childGlob)
-			) {
-				stream.forEach(path -> paths.add(path.toAbsolutePath().normalize()));
-			}
-		}
-
-		return paths;
-	}
-
-	private static List<Path> getParentDirectoriesFromGlobElements(
-			Path directory, String[] elements
-	) throws IOException {
-		final List<Path> parentDirectories = Lists.newArrayList(directory);
-
-		for (int i = 0; i < elements.length - 1; i++) {
-			final String element = elements[i];
-			final List<Path> childDirectories = new ArrayList<>();
-
-			for (Path parentDirectory : parentDirectories) {
-				try (
-						DirectoryStream<Path> stream =
-								Files.newDirectoryStream(parentDirectory, element)
-				) {
-					Iterables.filter(stream, Files::isDirectory).forEach(childDirectories::add);
-				}
-			}
-
-			if (childDirectories.isEmpty()) {
-				return Collections.emptyList();
-			}
-
-			parentDirectories.clear();
-			parentDirectories.addAll(childDirectories);
-		}
-
-		return parentDirectories;
 	}
 }

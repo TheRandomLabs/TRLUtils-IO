@@ -3,9 +3,9 @@ import com.github.spotbugs.SpotBugsTask
 plugins {
 	id "java-library"
 	id "maven-publish"
-	//id "checkstyle"
+	id "checkstyle"
 	id "pmd"
-	id "com.github.spotbugs" version "2.0.1"
+	id "com.github.spotbugs" version "3.0.0"
 	id "jacoco"
 }
 
@@ -21,16 +21,18 @@ dependencies {
 	implementation "com.google.guava:guava:28.1-jre"
 	implementation "org.slf4j:slf4j-api:2.0.0-alpha1"
 
+	api "com.squareup.okio:okio:2.4.1"
+
 	testRuntimeOnly "org.apache.logging.log4j:log4j-core:2.12.1"
 	testRuntimeOnly "org.apache.logging.log4j:log4j-slf4j18-impl:2.12.1"
 
-	testImplementation "org.junit.jupiter:junit-jupiter-api:5.3.1"
-	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.3.1"
+	testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0-M1"
+	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.0-M1"
 	testImplementation "org.assertj:assertj-core:3.14.0"
 
 	spotbugsPlugins "com.mebigfatguy.fb-contrib:fb-contrib:7.4.3.sb"
 	spotbugsPlugins "com.h3xstream.findsecbugs:findsecbugs-plugin:1.10.1"
-	spotbugsPlugins "jp.skypencil.findbugs.slf4j:bug-pattern:1.4.2@jar"
+	spotbugsPlugins "jp.skypencil.findbugs.slf4j:bug-pattern:1.5.0@jar"
 }
 
 test {
