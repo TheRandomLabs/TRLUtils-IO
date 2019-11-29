@@ -5,4 +5,7 @@
 	<Match>
 		<Bug pattern="EXS_EXCEPTION_SOFTENING_RETURN_FALSE"/>
 	</Match>
+	<Match>
+		<Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME"/>
+	</Match>
 </FindBugsFilter>
