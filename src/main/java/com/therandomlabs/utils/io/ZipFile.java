@@ -12,7 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * A representation of a zip file.
+ * A very basic representation of a zip file.
  * <p>
  * Operations can be performed on zip file by acquiring zip entry {@link Path}s using
  * {@link ZipFile#getEntry(String)}, then operating on those {@link Path}s as normal.

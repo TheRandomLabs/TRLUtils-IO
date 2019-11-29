@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 import com.google.common.base.Preconditions;
 
 /**
- * Contains utility methods for filesystem manipulation with Java NIO.
+ * Contains utility methods for filesystem manipulation using Java NIO.
  */
 public final class NIOUtils {
 	private NIOUtils() {}
