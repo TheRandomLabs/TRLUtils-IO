@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,12 +76,7 @@ public class NIOUtilsTest {
 
 		final Path targetDirectory = tempDirectory.resolve("target");
 
-		try {
-			NIOUtils.copyDirectory(sourceDirectory, targetDirectory);
-		} catch (NoSuchFileException ex) {
-			ex.printStackTrace();
-		}
-
+		NIOUtils.copyDirectory(sourceDirectory, targetDirectory);
 		assertThat(targetDirectory.resolve("a.txt")).isRegularFile();
 		assertThat(targetDirectory.resolve("a").resolve("b.txt")).isRegularFile();
 		assertThat(targetDirectory.resolve("a").resolve("b").resolve("c.txt")).isRegularFile();

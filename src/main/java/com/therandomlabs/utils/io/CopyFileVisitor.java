@@ -9,11 +9,12 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 final class CopyFileVisitor extends SimpleFileVisitor<Path> {
+	private final Path sourceDirectory;
 	private final Path targetDirectory;
 	private final CopyOption[] options;
-	private Path sourceDirectory;
 
-	CopyFileVisitor(Path targetDirectory, CopyOption[] options) {
+	CopyFileVisitor(Path sourceDirectory, Path targetDirectory, CopyOption[] options) {
+		this.sourceDirectory = sourceDirectory;
 		this.targetDirectory = targetDirectory;
 		this.options = options;
 	}
@@ -21,12 +22,7 @@ final class CopyFileVisitor extends SimpleFileVisitor<Path> {
 	@Override
 	public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attributes)
 			throws IOException {
-		if (sourceDirectory == null) {
-			sourceDirectory = directory;
-		} else {
-			Files.createDirectories(targetDirectory.resolve(sourceDirectory.relativize(directory)));
-		}
-
+		Files.createDirectories(targetDirectory.resolve(sourceDirectory.relativize(directory)));
 		return FileVisitResult.CONTINUE;
 	}
 

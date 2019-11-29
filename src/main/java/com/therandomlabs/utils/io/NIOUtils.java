@@ -144,8 +144,17 @@ public final class NIOUtils {
 			Path sourceDirectory, Path targetDirectory, CopyOption... options
 	) throws IOException {
 		Preconditions.checkNotNull(sourceDirectory, "sourceDirectory should not be null");
+		Preconditions.checkArgument(
+				Files.isDirectory(sourceDirectory), "sourceDirectory should be a directory"
+		);
 		Preconditions.checkNotNull(targetDirectory, "targetDirectory should not be null");
-		Files.walkFileTree(sourceDirectory, new CopyFileVisitor(targetDirectory, options));
+		Preconditions.checkArgument(
+				!Files.isRegularFile(targetDirectory),
+				"targetDirectory should not be a file"
+		);
+		Files.walkFileTree(
+				sourceDirectory, new CopyFileVisitor(sourceDirectory, targetDirectory, options)
+		);
 	}
 
 	/**
