@@ -16,13 +16,13 @@ public class NIOUtilsTest {
 	@Test
 	public void listShouldReturnAllDirectoryElements(@TempDir Path tempDirectory)
 			throws IOException {
-		final List<Path> files = new ArrayList<>(10);
+		final List<Path> files = new ArrayList<>(5);
 
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 5; i++) {
 			files.add(Files.createFile(tempDirectory.resolve("file" + i)));
 		}
 
-		assertThat(NIOUtils.list(tempDirectory)).isEqualTo(files);
+		assertThat(NIOUtils.list(tempDirectory)).containsAll(files);
 	}
 
 	@Test
