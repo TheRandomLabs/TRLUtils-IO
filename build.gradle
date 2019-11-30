@@ -10,7 +10,6 @@ plugins {
 }
 
 group = "com.therandomlabs.utils.io"
-archivesBaseName = "TRLUtils-IO"
 version = "1.0.0"
 
 repositories {
