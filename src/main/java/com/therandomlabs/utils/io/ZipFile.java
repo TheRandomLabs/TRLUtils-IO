@@ -15,7 +15,7 @@ import com.google.common.collect.ImmutableMap;
  * A very basic representation of a zip file.
  * <p>
  * Operations can be performed on zip file by acquiring zip entry {@link Path}s using
- * {@link ZipFile#getEntry(String)}, then operating on those {@link Path}s as normal.
+ * {@link #getEntry(String)}, then operating on those {@link Path}s as normal.
  * <p>
  * For example, to extract a zip file to a directory, the following code can be used:
  * <pre>
@@ -101,8 +101,7 @@ public class ZipFile implements AutoCloseable {
 
 	/**
 	 * Returns a {@link Path} that represents this {@link ZipFile}'s root.
-	 * This is equivalent to calling {@link ZipFile#getEntry(String)} with {@code "/"} as
-	 * the entry path.
+	 * This is equivalent to calling {@link #getEntry(String)} with {@code "/"} as the entry path.
 	 *
 	 * @return a {@link Path} that represents this {@link ZipFile}'s root.
 	 */
