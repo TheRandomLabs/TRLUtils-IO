@@ -5,7 +5,7 @@
 
 A collection of utilities that are useful when performing I/O operations.
 
-All code is documented with Javadoc and tested using JUnit.
+All public-facing code is documented with Javadoc and (mostly) tested with JUnit.
 
 ## Features
 
