@@ -43,6 +43,6 @@ repositories {
 }
 
 dependencies {
-	implementation "com.github.TheRandomLabs:TRLUtils-IO:master-SNAPSHOT"
+	implementation "com.github.TheRandomLabs:TRLUtils-IO:v1.0.1"
 }
 ```
