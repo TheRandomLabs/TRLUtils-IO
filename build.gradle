@@ -9,15 +9,17 @@ plugins {
 	id "jacoco"
 }
 
-group = "com.therandomlabs.utils.romannumerals"
-version = "1.0.0"
+group = "com.therandomlabs.utils.io"
+version = "1.0.1"
 
 repositories {
 	mavenCentral()
 }
 
 dependencies {
-	testImplementation "org.slf4j:slf4j-api:2.0.0-alpha1"
+	implementation "com.google.guava:guava:28.1-jre"
+	implementation "org.slf4j:slf4j-api:2.0.0-alpha1"
+
 	testRuntimeOnly "org.apache.logging.log4j:log4j-core:2.12.1"
 	testRuntimeOnly "org.apache.logging.log4j:log4j-slf4j18-impl:2.12.1"
 
@@ -39,6 +41,9 @@ jacocoTestCoverageVerification {
 	violationRules {
 		rule {
 			element = "CLASS"
+			excludes = [
+					"com.therandomlabs.utils.io.IOConstants"
+			]
 
 			limit {
 				counter = "INSTRUCTION"
@@ -91,7 +96,7 @@ publishing {
 	repositories {
 		maven {
 			name = "GitHubPackages"
-			url = uri("https://maven.pkg.github.com/TheRandomLabs/TRLUtils-RomanNumerals")
+			url = uri("https://maven.pkg.github.com/TheRandomLabs/TRLUtils-IO")
 
 			credentials {
 				username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
