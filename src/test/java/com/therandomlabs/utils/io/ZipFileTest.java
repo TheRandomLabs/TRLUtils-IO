@@ -17,6 +17,7 @@ public class ZipFileTest {
 		Files.createFile(path);
 
 		try (ZipFile zipFile = ZipFile.createNew(path)) {
+			assertThat(zipFile).isNotNull();
 			assertThat(path).isRegularFile();
 
 			//Check for the zip file header.
