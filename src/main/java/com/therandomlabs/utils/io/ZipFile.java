@@ -6,7 +6,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -35,8 +34,9 @@ import com.google.common.collect.ImmutableMap;
  * </pre>
  */
 public class ZipFile implements AutoCloseable {
-	private static final Map<String, String> CREATE = ImmutableMap.of("create", "true");
-	private static final Map<String, String> DO_NOT_CREATE = ImmutableMap.of("create", "false");
+	private static final ImmutableMap<String, String> CREATE = ImmutableMap.of("create", "true");
+	private static final ImmutableMap<String, String> DO_NOT_CREATE =
+			ImmutableMap.of("create", "false");
 
 	private final FileSystem fileSystem;
 	private final Path path;
