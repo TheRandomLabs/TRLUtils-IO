@@ -1,7 +1,15 @@
 # TRLUtils-IO
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
 [![Build](https://jitci.com/gh/TheRandomLabs/TRLUtils-IO/svg)](https://jitci.com/gh/TheRandomLabs/TRLUtils-IO)
+[![Dependabot](https://badgen.net/dependabot/TheRandomLabs/TRLUtils-IO/?icon=dependabot)](https://dependabot.com/)
+
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/TheRandomLabs/TRLUtils-IO.svg)](http://isitmaintained.com/project/TheRandomLabs/TRLUtils-IO "Average time to resolve an issue")
+
+<!-- [![Maven Central](https://img.shields.io/maven-central/v/com.therandomlabs.utils.io/trlutils-io.svg?style=shield)](https://maven-badges.herokuapp.com/maven-central/com.therandomlabs.utils.io/trlutils-io/)
+
+[comment]: # [![Javadoc](https://javadoc.io/badge/com.therandomlabs.utils.io/trlutils-io.svg?color=blue)](https://javadoc.io/doc/com.therandomlabs.utils.io/trlutils-io)-->
 
 A collection of utilities that are useful when performing I/O operations.
 
@@ -11,14 +19,14 @@ All public-facing code is documented with Javadoc and (mostly) tested with JUnit
 
 * `HumanReadableSize` can be used to convert sizes in bytes to one of the following human-readable
 formats:
-	* Decimal (SI): kB, MB, GB, TB, GB, PB, EB
-	* Binary: KiB, MiB, GiB, TiB, GiB, PiB, EiB
+  * Decimal (SI): kB, MB, GB, TB, GB, PB, EB
+  * Binary: KiB, MiB, GiB, TiB, GiB, PiB, EiB
 * `IOConstants` contains the following constants:
 * `IOConstants#UNIX_DIRECTORY_SEPARATOR` (`'/'`)
-	* `IOConstants#WINDOWS_DIRECTORY_SEPARATOR` (`'\\'`)
-	* `IOConstants#UNIX_LINE_SEPARATOR` (`"\n"`)
-	* `IOConstants#WINDOWS_LINE_SEPARATOR` (`"\r\n"`)
-	* `IOConstants#LINE_SEPARATOR` (equivalent to `System#lineSeparator()`)
+  * `IOConstants#WINDOWS_DIRECTORY_SEPARATOR` (`'\\'`)
+  * `IOConstants#UNIX_LINE_SEPARATOR` (`"\n"`)
+  * `IOConstants#WINDOWS_LINE_SEPARATOR` (`"\r\n"`)
+  * `IOConstants#LINE_SEPARATOR` (equivalent to `System#lineSeparator()`)
 * `NIOUtils` contains a collection of utility methods for filesystem manipulation using Java NIO,
 including `NIOUtils#list(Path)`, `NIOUtils#copyDirectory(Path, Path)` and
 `NIOUtils#matchGlob(Path, String)`.
