@@ -2,7 +2,9 @@
 .settings
 bin
 build
+config
 .classpath
+.editorconfig
 .project
 
 # idea
