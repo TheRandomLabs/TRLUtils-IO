@@ -36,21 +36,3 @@ including `PathUtils#getFileName(Path)`, `PathUtils#getCommonAncestor(Path, Path
 * `ZipFile` is a very basic representation of a zip file. The main method in this class is the
 `ZipFile#getEntry(String)` method, which returns a `Path` which represents a zip file entry.
 `Path`s returned by this method can be operated on normally like any other `Path`.
-
-## Using with Gradle
-
-TRLUtils-IO can be found on [Jitpack](https://jitpack.io/):
-
-```groovy
-repositories {
-	mavenCentral()
-
-	maven {
-		url "https://jitpack.io"
-	}
-}
-
-dependencies {
-	implementation "com.github.TheRandomLabs:TRLUtils-IO:v1.0.1"
-}
-```
