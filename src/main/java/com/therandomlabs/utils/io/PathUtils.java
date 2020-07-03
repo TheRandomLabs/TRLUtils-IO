@@ -137,18 +137,14 @@ public final class PathUtils {
 		Preconditions.checkNotNull(paths, "paths should not be null");
 		Preconditions.checkArgument(paths.size() > 1, "paths should contain at least two elements");
 
-		Path commonAncestor = null;
+		Path ancestor = null;
 
 		//We use ImmutableSet#copyOf to remove duplicates.
 		for (Path path : ImmutableSet.copyOf(paths)) {
-			if (commonAncestor == null) {
-				commonAncestor = path;
-			} else {
-				commonAncestor = getCommonAncestor(commonAncestor, path);
-			}
+			ancestor = ancestor == null ? path : getCommonAncestor(ancestor, path);
 		}
 
-		return commonAncestor;
+		return ancestor;
 	}
 
 	/**

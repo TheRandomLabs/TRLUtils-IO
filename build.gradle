@@ -1,6 +1,6 @@
 group = "com.therandomlabs.utils.io"
 version = "1.0.0"
 
-ext.jacocoMinimumInstructionCoverage = 0.0
+ext.jacocoMinimumInstructionCoverage = 0.5
 
 apply from: "https://raw.githubusercontent.com/TheRandomLabs/Common-Gradle/master/build.gradle"
