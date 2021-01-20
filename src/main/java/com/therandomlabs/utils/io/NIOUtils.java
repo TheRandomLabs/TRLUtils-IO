@@ -237,7 +237,7 @@ public final class NIOUtils {
 	 *
 	 * @param directory a {@link Path} to a directory.
 	 * @param glob a glob. The Unix path separator ({@code /}) should be used instead of the
-	 * Windows path separator ({@code \}) as the backslash is used as an escape character.
+	 * Windows path separator ({@code \}), as the backslash is used as an escape character.
 	 * @return a list of {@link Path}s that match the specified glob relative to the
 	 * specified directory.
 	 * @throws IOException if an I/O error occurs.
